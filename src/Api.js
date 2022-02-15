@@ -9,7 +9,7 @@ const pool = new Pool({
     port: 25060,
     ssl: {
         rejectUnauthorized: true,
-        ca: fs.readFileSync("ca-certificate.crt") // file location of certificate
+        ca: fs.readFileSync("ca-certificate.crt") // file location of certificates
     }
 })
 
