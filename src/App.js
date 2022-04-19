@@ -42,20 +42,12 @@ app.patch('/restaurants/:id', jwtCheck, api.replaceRestaurant);
 app.delete('/restaurants/:id', jwtCheck, api.deleteRestaurant);
 
 // Reservation endpoints
-app.post('/reservations/', jwtCheck, api.addReservation);
-app.put('/reservations/:confirmation_number', jwtCheck, api.updateReservation);
-app.get('/reservations/:confirmation_number', jwtCheck, api.getReservation);
-app.get('reservations/', jwtCheck, api.getAllReservations);
-app.patch('/reservations/:confirmation_number', jwtCheck, api.replaceReservation);
-app.delete('/reservations/:confirmation_number', jwtCheck, api.deleteReservation);
-
-// Table endpoints
-app.post('/tables/', jwtCheck, api.addTable);
-app.put('/tables/:restaurant_id/:table_id', jwtCheck, api.updateTable);
-app.get('/tables/:restaurant_id/:table_id', jwtCheck, api.getTable);
-app.get('/tables/', jwtCheck, api.getAllTables);
-app.patch('/tables/:restaurant_id/:table_id', jwtCheck, api.replaceTable);
-app.delete('/tables/:restaurant_id/:table_id', jwtCheck, api.deleteTable);
+app.post('/reservations/', api.addReservation);
+app.put('/reservations/:restaurant_id/:confirmation_number', api.updateReservation);
+app.get('/reservations/:restaurant_id/:confirmation_number', api.getReservation);
+app.get('/reservations/', api.getAllReservations);
+app.patch('/reservations/:restaurant_id/:confirmation_number', api.replaceReservation);
+app.delete('/reservations/:restaurant_id/:confirmation_number', api.deleteReservation);
 
 // Employee endpoints
 app.post('/employees/', jwtCheck, api.addEmployee);
