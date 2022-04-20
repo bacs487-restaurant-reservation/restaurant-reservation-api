@@ -96,12 +96,12 @@ const deleteRestaurant = (request, response) => {
 // Reservation Methods
 // Create a reservation
 const addReservation = async (request, response) => {
+    const table_id = parseInt(request.params.table_id)
     const confirmation_number = parseInt(request.params.confirmation_number)
     const reservation_time = request.params.reservation_time
-    const restaurant_id = parseInt(request.params.restaurant_id)
     
-    pool.query('INSERT INTO reservations (reservation_time, confirmation_number, restaurant_id) VALUES ($1, $2, $3)',
-    [reservation_time, confirmation_number, restaurant_id], 
+    pool.query('INSERT INTO reservations (table_id, reservation_time, confirmation_number) VALUES ($1, $2, $3)',
+    [table_id, reservation_time, confirmation_number], 
     (error, results) => {
         if (error) {
             throw error
@@ -112,11 +112,11 @@ const addReservation = async (request, response) => {
 // Update a reservation
 const updateReservation = (request, response) => {
     const confirmation_number = parseInt(request.params.confirmation_number)
+    const table_id = parseInt(request.params.table_id)
     const reservation_time = request.params.reservation_time
-    const restaurant_id = parseInt(request.params.restaurant_id)
 
-    pool.query ('UPDATE reservations SET reservation_time = $1 WHERE confirmation_number = $2 AND restaurant_id = $3',
-        [reservation_time, confirmation_number, restaurant_id],
+    pool.query ('UPDATE reservations SET table_id = $1, reservation_time = $2 WHERE confirmation_number = $3',
+        [table_id, reservation_time, confirmation_number],
         (error, results) => {
             if (error) {
                 throw error
@@ -127,9 +127,8 @@ const updateReservation = (request, response) => {
 // Retrieve an individual reservation by confirmation_number
 const getReservation = (request, response) => {
     const confirmation_number = parseInt(request.params.confirmation_number)
-    const restaurant_id = parseInt(request.params.restaurant_id)
     
-    pool.query('SELECT * FROM reservations WHERE restaurant_id = $1 AND confirmation_number = $2', [restaurant_id, confirmation_number],
+    pool.query('SELECT * FROM reservations WHERE confirmation_number = $1', [confirmation_number],
     (error, results) => {
         if (error) {
             throw error
@@ -139,7 +138,8 @@ const getReservation = (request, response) => {
 };
 // Retrieve all reservations
 const getAllReservations = async (request, response) => {
-    pool.query('SELECT * FROM reservations ORDER BY confirmation_number', (error, results) => {
+    pool.query('SELECT * FROM reservations ORDER BY confirmation_number ASC',
+     (error, results) => {
          if (error) {
              throw error
          }
@@ -149,11 +149,11 @@ const getAllReservations = async (request, response) => {
 // Replace a reservation
 const replaceReservation = (request, response) => {
     const confirmation_number = parseInt(request.params.confirmation_number)
+    const table_id = parseInt(request.params.table_id)
     const reservation_time = request.params.reservation_time
-    const restaurant_id = parseInt(request.params.restaurant_id)
 
-    pool.query ('UPDATE reservations SET reservation_time = $1, confirmation_number = $2, restaurant_id = $3 WHERE confirmation_number = $2 AND restaurant_id = $3',
-        [reservation_time, confirmation_number, restaurant_id],
+    pool.query ('UPDATE reservations SET table_id = $1, reservation_time = $2, confirmation_number = $3 WHERE confirmation_number = $3',
+        [table_id, reservation_time, confirmation_number],
         (error, results) => {
             if (error) {
                 throw error
@@ -164,14 +164,96 @@ const replaceReservation = (request, response) => {
 // Remove a reservation
 const deleteReservation = (request, response) => {
     const confirmation_number = parseInt(request.params.confirmation_number)
-    const restaurant_id = parseInt(request.params.restaurant_id)
 
-    pool.query('DELETE FROM reservations WHERE confirmation_number = $1 AND restaurant_id = $2', [confirmation_number, restaurant_id],
+    pool.query('DELETE FROM reservations WHERE confirmation_number = $1', [confirmation_number],
     (error, results) => {
         if (error) {
             throw error
         }
         response.status(200).send(`Reservation deleted with Confirmation Number: ${confirmation_number}`)
+    })
+};
+
+// Table Methods
+// Create a table
+const addTable = async (request, response) => {
+    const table_id = parseInt(request.params.table_id)
+    const restaurant_id = parseInt(request.params.restaurant_id)
+    const size = parseInt(request.params.size)
+    
+    pool.query('INSERT INTO tables (table_id, restaurant_id, size) VALUES ($1, $2, $3)',
+    [table_id, restaurant_id, size], 
+    (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(201).send(`Table added with ID: ${table_id}`)
+    })
+};
+// Modify a Table
+const updateTable = (request, response) => {
+    const restaurant_id = parseInt(request.params.restaurant_id)
+    const table_id = parseInt(request.params.table_id)
+    const size = parseInt(request.params.size)
+
+    pool.query ('UPDATE tables SET size = $1 WHERE restaurant_id = $2 AND table_id = $3',
+        [size, restaurant_id, table_id],
+        (error, results) => {
+            if (error) {
+                throw error
+            }
+            response.status(200).send(`Table modified with ID: ${table_id}`)
+        })
+};
+// Retrieve an individual Table
+const getTable = (request, response) => {
+    const restaurant_id = parseInt(request.params.restaurant_id)
+    const table_id = parseInt(request.params.table_id)
+    
+    pool.query('SELECT * FROM tables WHERE restaurant_id = $1 AND table_id = $2', [restaurant_id, table_id],
+    (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).json(results.rows)
+    })
+};
+// Retrieve all Tables
+const getAllTables = async (request, response) => {
+    pool.query('SELECT * FROM tables ORDER BY restaurant_id ASC',
+     (error, results) => {
+         if (error) {
+             throw error
+         }
+        response.status(200).json(results.rows)
+     })
+};
+// Replace a Table
+const replaceTable = (request, response) => {
+    const restaurant_id = parseInt(request.params.restaurant_id)
+    const table_id = parseInt(request.params.table_id)
+    const size = parseInt(request.params.size)
+
+    pool.query ('UPDATE tables SET table_id = $1, restaurant_id = $2, size = $3 WHERE restaurant_id = $2 AND table_id = $1',
+        [table_id, restaurant_id, size],
+        (error, results) => {
+            if (error) {
+                throw error
+            }
+            response.status(200).send(`Table replaced with ID: ${table_id}`)
+        })
+};
+// Remove a Table
+const deleteTable = (request, response) => {
+    const table_id = parseInt(request.params.table_id)
+    const restaurant_id = parseInt(request.params.restaurant_id)
+
+    pool.query('DELETE FROM tables WHERE restaurant_id = $1 AND table_id = $2', [restaurant_id, table_id],
+    (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).send(`Table deleted with ID: ${table_id}`)
     })
 };
 
@@ -272,6 +354,12 @@ module.exports = {
     getAllReservations,
     replaceReservation,
     deleteReservation,
+    addTable,
+    updateTable,
+    getAllTables,
+    getTable,
+    replaceTable,
+    deleteTable,
     addEmployee,
     updateEmployee,
     getEmployee,
