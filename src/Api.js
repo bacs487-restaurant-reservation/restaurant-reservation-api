@@ -19,9 +19,10 @@ const addRestaurant = async (request, response) => {
     const id = parseInt(request.params.id)
     const zip_code = parseInt(request.params.zip_code)
     const restaurant_name = request.params.restaurant_name
+    const table_count = parseInt(request.params.table_count)
     
-    pool.query('INSERT INTO restaurants (id, restaurant_name, zip_code) VALUES ($1, $2, $3)',
-    [id, restaurant_name, zip_code], 
+    pool.query('INSERT INTO restaurants (id, restaurant_name, zip_code, table_count) VALUES ($1, $2, $3, $4)',
+    [id, restaurant_name, zip_code, table_count], 
     (error, results) => {
         if (error) {
             throw error
@@ -34,9 +35,10 @@ const updateRestaurant = (request, response) => {
     const id = parseInt(request.params.id)
     const zip_code = parseInt(request.params.zip_code)
     const restaurant_name = request.params.restaurant_name
+    const table_count = request.params.table_count
 
-    pool.query ('UPDATE restaurants SET restaurant_name = $1, zip_code = $2 WHERE id = $3',
-        [restaurant_name, zip_code, id],
+    pool.query ('UPDATE restaurants SET restaurant_name = $1, zip_code = $2, table_count = $3 WHERE id = $4',
+        [restaurant_name, zip_code, table_count, id],
         (error, results) => {
             if (error) {
                 throw error
@@ -73,8 +75,8 @@ const replaceRestaurant = (request, response) => {
     const zip_code = parseInt(request.params.zip_code)
     const restaurant_name = request.params.restaurant_name
 
-    pool.query ('UPDATE restaurants SET restaurant_name = $1, zip_code = $2, id = $3, WHERE id = $3',
-        [restaurant_name, zip_code, id],
+    pool.query ('UPDATE restaurants SET restaurant_name = $1, zip_code = $2, id = $3, table_count = $4 WHERE id = $3',
+        [restaurant_name, zip_code, id, table_count],
         (error, results) => {
             if (error) {
                 throw error
